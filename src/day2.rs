@@ -72,7 +72,6 @@ impl Password {
 pub fn gen(input: &str) -> Vec<Password> {
     input
         .lines()
-        // .map(|s| parse_line(s.trim()))
         .filter_map(|s| s.trim().parse().ok())
         .collect()
 }
