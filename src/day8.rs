@@ -142,6 +142,6 @@ acc +6";
 
     #[test]
     fn test_part2() {
-        assert_eq!(solve_part2(&gen(get_input())), 8);
+        assert_eq!(solve_part2(&gen(get_input())), Some(8));
     }
 }
