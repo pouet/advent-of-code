@@ -1,3 +1,10 @@
+use nom::IResult;
+use nom::character::complete::{one_of, digit1, space1};
+use nom::combinator::{recognize, map_res, opt};
+use nom::sequence::{pair, separated_pair};
+use nom::branch::alt;
+use nom::bytes::complete::tag;
+
 #[derive(Debug, Clone)]
 pub enum Op {
     Acc(isize),
@@ -54,14 +61,22 @@ impl State {
 
 impl Op {
     fn from(s: &str) -> Option<Op> {
-        let sp: Vec<&str> = s.splitn(2, " ").collect();
+        fn parse_isize(s: &str) -> IResult<&str, isize> {
+            let parser = pair(opt(one_of("+-")), digit1);
+            map_res(recognize(parser), |s: &str| s.parse())(s)
+        }
 
-        Some(match (sp.get(0), sp.get(1)) {
-            (Some(&"acc"), Some(s)) => Op::Acc(s.parse().ok()?),
-            (Some(&"jmp"), Some(s)) => Op::Jmp(s.parse().ok()?),
-            (Some(&"nop"), Some(s)) => Op::Nop(s.parse().ok()?),
-            (_, _) => panic!("Invalid input: {}", s)
-        })
+        let op = separated_pair(
+            alt((tag("acc"), tag("jmp"), tag("nop"))),
+            space1,
+            parse_isize)(s);
+
+        match op {
+            Ok(("", ("nop", n))) => Some(Op::Nop(n)),
+            Ok(("", ("jmp", n))) => Some(Op::Jmp(n)),
+            Ok(("", ("acc", n))) => Some(Op::Acc(n)),
+            _ => None
+        }
     }
 }
 
@@ -133,6 +148,13 @@ acc -99
 acc +1
 jmp -4
 acc +6";
+    }
+
+    #[test]
+    fn test_nom() {
+        get_input()
+            .lines()
+            .for_each(|s| println!("{:?}", Op::from(s)));
     }
 
     #[test]
