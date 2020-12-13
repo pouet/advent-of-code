@@ -227,7 +227,6 @@ fn to_tag_value(s: &str) -> Option<Vec<(String, String)>> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use itertools::Itertools;
 
     fn get_input() -> &'static str {
         return "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
