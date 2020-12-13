@@ -1,6 +1,5 @@
 use nom::lib::std::fmt::Formatter;
 use core::fmt;
-use std::ops::Not;
 
 #[derive(Clone, PartialEq)]
 pub enum Seat {
@@ -18,22 +17,16 @@ pub struct State {
     changes: usize,
 }
 
+#[derive(Copy, Clone)]
 pub struct Position {
     x: isize,
     y: isize,
 }
 
-pub enum Direction {
-    Up,
-    Down
-}
-
-impl Iterator for Direction {
-    type Item = Direction;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        unimplemented!()
-    }
+#[derive(Copy, Clone, PartialEq)]
+pub enum Depth {
+    Inf,
+    Next,
 }
 
 impl fmt::Debug for Seat {
@@ -70,32 +63,7 @@ impl State {
         }
     }
 
-    fn next_seat1(&self, pos: Position) -> Seat {
-        let width = self.width as isize;
-        let height = self.height as isize;
-        let in_bounds = |x, y| x >= 0 && x < width && y >= 0 && y < height;
-        let count =
-            (-1..=1).fold(0, |acc, x| {
-                (-1..=1).fold(0, |acc, y| {
-                    let p = Position { x: pos.x + x, y: pos.y + y };
-                    let count = if (x == 0 && y == 0).not() && in_bounds(p.x, p.y) &&
-                        self.seats[p.y as usize][p.x as usize] == Seat::Occupied {
-                        1
-                    } else {
-                        0
-                    };
-                    acc + count
-                }) + acc
-            });
-
-        match &self.seats[pos.y as usize][pos.x as usize] {
-            Seat::Empty if count == 0 => Seat::Occupied,
-            Seat::Occupied if count >= 4 => Seat::Empty,
-            seat => seat.clone()
-        }
-    }
-
-    fn next_seatn(&self, pos: Position) -> Seat {
+    fn next_seat(&self, pos: Position, depth: Depth) -> Seat {
         let width = self.width as isize;
         let height = self.height as isize;
         let in_bounds = |x, y| x >= 0 && x < width && y >= 0 && y < height;
@@ -105,55 +73,41 @@ impl State {
             (1, -1), (1, 0), (1, 1)
         ];
 
-        let mut count = 0;
+        let count = dirs
+            .iter()
+            .fold(0, |acc, (xdir, ydir)| {
+                let mut p = Position { x: pos.x + xdir, y: pos.y + ydir };
+                while depth == Depth::Inf && in_bounds(p.x, p.y) &&
+                    self.seats[p.y as usize][p.x as usize] == Seat::Floor {
+                    p = Position { x: p.x + xdir, y: p.y + ydir };
+                }
 
-        for (xdir, ydir) in dirs.iter() {
-            let mut p = Position { x: pos.x + xdir, y: pos.y + ydir };
-            while in_bounds(p.x, p.y) &&
-                self.seats[p.y as usize][p.x as usize] == Seat::Floor {
-                p = Position { x: p.x + xdir, y: p.y + ydir };
-            }
+                if in_bounds(p.x, p.y) &&
+                    self.seats[p.y as usize][p.x as usize] == Seat::Occupied {
+                    acc + 1
+                } else {
+                    acc
+                }
+            });
 
-            if in_bounds(p.x, p.y) &&
-                self.seats[p.y as usize][p.x as usize] == Seat::Occupied {
-                count += 1;
-            }
-
-        }
+        let cond = match depth {
+            Depth::Inf => 5,
+            Depth::Next => 4
+        };
         match &self.seats[pos.y as usize][pos.x as usize] {
             Seat::Empty if count == 0 => Seat::Occupied,
-            Seat::Occupied if count >= 5 => Seat::Empty,
+            Seat::Occupied if count >= cond => Seat::Empty,
             seat => seat.clone()
         }
     }
 
-    fn update(&self) -> State {
+    fn update(&self, depth: Depth) -> State {
         let mut seats: Layout = self.seats.to_vec();
         let changes =
             (0..self.height).fold(0, |acc, y|
                 (0..self.width).fold(0, |acc, x| {
                     let p = Position { x: x as isize, y: y as isize };
-                    let seat = self.next_seat1(p);
-                    let change = if seat != seats[y][x] { 1 } else { 0 };
-                    seats[y][x] = seat;
-                    acc + change
-                }) + acc,
-            );
-
-        State {
-            seats,
-            changes,
-            ..*self
-        }
-    }
-
-    fn updaten(&self) -> State {
-        let mut seats: Layout = self.seats.to_vec();
-        let changes =
-            (0..self.height).fold(0, |acc, y|
-                (0..self.width).fold(0, |acc, x| {
-                    let p = Position { x: x as isize, y: y as isize };
-                    let seat = self.next_seatn(p);
+                    let seat = self.next_seat(p, depth);
                     let change = if seat != seats[y][x] { 1 } else { 0 };
                     seats[y][x] = seat;
                     acc + change
@@ -189,53 +143,23 @@ pub fn gen(input: &str) -> State {
     State::new(seats)
 }
 
+fn rec(state: &State, depth: Depth) -> usize {
+    let state = state.update(depth);
+    if state.changes == 0 {
+        state.count_occupied()
+    } else {
+        rec(&state, depth)
+    }
+}
+
 #[aoc(day11, part1)]
 pub fn solve_part1(state: &State) -> usize {
-    fn rec(state: &State) -> usize {
-        let state = state.update();
-        if state.changes == 0 {
-            state.count_occupied()
-        } else {
-            rec(&state)
-        }
-    }
-
-    rec(state)
+    rec(state, Depth::Next)
 }
 
 #[aoc(day11, part2)]
 pub fn solve_part2(state: &State) -> usize {
-    fn rec(state: &State) -> usize {
-        let state = state.updaten();
-        if state.changes == 0 {
-            state.count_occupied()
-        } else {
-            rec(&state)
-        }
-    }
-
-    // for v in &state.seats {
-    //     println!("{:?}", v);
-    // }
-    // println!("--------------------------------------------------");
-    // let state = state.updaten();
-    // for v in &state.seats {
-    //     println!("{:?}", v);
-    // }
-    // println!("--------------------------------------------------");
-    // let state = state.updaten();
-    // for v in &state.seats {
-    //     println!("{:?}", v);
-    // }
-    // println!("--------------------------------------------------");
-    // let state = state.updaten();
-    // for v in &state.seats {
-    //     println!("{:?}", v);
-    // }
-    // println!("--------------------------------------------------");
-    //
-    // return 0;
-    rec(state)
+    rec(state, Depth::Inf)
 }
 
 #[cfg(test)]
@@ -255,15 +179,13 @@ L.LLLLLL.L
 L.LLLLL.LL";
     }
 
-    // #[test]
-    // fn test_gen() {
-    //     let s = gen(get_input());
-    //
-    //     for v in s.seats {
-    //         println!("{:?}", v);
-    //     }
-    //     println!("--------------------------------------------------");
-    // }
+    #[test]
+    fn test_gen() {
+        let s = gen(get_input());
+        for v in s.seats {
+            println!("{:?}", v);
+        }
+    }
 
     #[test]
     fn test_part1() {
@@ -272,15 +194,6 @@ L.LLLLL.LL";
 
     #[test]
     fn test_part2() {
-//         assert_eq!(solve_part2(&gen(".......#.
-// ...#.....
-// .#.......
-// .........
-// ..#L....#
-// ....#....
-// .........
-// #........
-// ...#.....")), 26);
         assert_eq!(solve_part2(&gen(get_input())), 26);
     }
 }
