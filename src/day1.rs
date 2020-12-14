@@ -8,7 +8,7 @@ pub fn gen(input: &str) -> Vec<i32> {
         .collect()
 }
 
-fn solve(input: &Vec<i32>, chunk: usize) -> Option<i32> {
+fn solve(input: &[i32], chunk: usize) -> Option<i32> {
     return input
         .iter()
         .combinations(chunk)
@@ -23,13 +23,13 @@ fn solve(input: &Vec<i32>, chunk: usize) -> Option<i32> {
 }
 
 #[aoc(day1, part1)]
-pub fn solve_part1(input: &Vec<i32>) -> Option<i32> {
-    return solve(input, 2);
+pub fn solve_part1(input: &[i32]) -> Option<i32> {
+    solve(input, 2)
 }
 
 #[aoc(day1, part2)]
-pub fn solve_part2(input: &Vec<i32>) -> Option<i32> {
-    return solve(input, 3);
+pub fn solve_part2(input: &[i32]) -> Option<i32> {
+    solve(input, 3)
 }
 
 #[cfg(test)]

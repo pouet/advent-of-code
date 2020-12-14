@@ -115,7 +115,7 @@ pub fn gen(input: &str) -> Vec<Dir> {
 }
 
 #[aoc(day12, part1)]
-pub fn solve_part1(dirs: &Vec<Dir>) -> usize {
+pub fn solve_part1(dirs: &[Dir]) -> usize {
     dirs
         .iter()
         .fold(State::new(), |state, dir| state.advance(dir))
@@ -123,7 +123,7 @@ pub fn solve_part1(dirs: &Vec<Dir>) -> usize {
 }
 
 #[aoc(day12, part2)]
-pub fn solve_part2(dirs: &Vec<Dir>) -> usize {
+pub fn solve_part2(dirs: &[Dir]) -> usize {
     dirs
         .iter()
         .fold(State::new(), |state, dir| state.advance_waypoint(dir))

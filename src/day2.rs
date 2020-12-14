@@ -77,7 +77,7 @@ pub fn gen(input: &str) -> Vec<Password> {
 }
 
 #[aoc(day2, part1)]
-pub fn solve_part1(input: &Vec<Password>) -> usize {
+pub fn solve_part1(input: &[Password]) -> usize {
     input
         .iter()
         .filter(|pass| pass.is_valid1())
@@ -85,7 +85,7 @@ pub fn solve_part1(input: &Vec<Password>) -> usize {
 }
 
 #[aoc(day2, part2)]
-pub fn solve_part2(input: &Vec<Password>) -> usize {
+pub fn solve_part2(input: &[Password]) -> usize {
     input
         .iter()
         .filter(|pass| pass.is_valid2())

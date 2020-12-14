@@ -1,7 +1,9 @@
 use itertools::Itertools;
+use std::ops::Not;
 
 // Chinese remainder theorem
 // https://rosettacode.org/wiki/Chinese_remainder_theorem#Rust
+#[allow(clippy::many_single_char_names)]
 fn egcd(a: i64, b: i64) -> (i64, i64, i64) {
     if a == 0 {
         (b, 0, 1)
@@ -41,10 +43,10 @@ pub struct State {
 
 #[aoc_generator(day13)]
 pub fn gen(input: &str) -> State {
-    let mut sp = input.split("\n");
+    let mut sp = input.split('\n');
     let time = sp.next().unwrap().parse().unwrap();
     let ids = sp.next().unwrap()
-        .split(",")
+        .split(',')
         .enumerate()
         .filter(|(_, s)| *s != "x")
         .map(|(i, b)| (i as i64, b.parse::<i64>().unwrap()))
@@ -55,22 +57,21 @@ pub fn gen(input: &str) -> State {
 
 #[aoc(day13, part1)]
 pub fn solve_part1(state: &State) -> i64 {
-    assert!(state.ids.len() > 0);
+    assert!(state.ids.is_empty().not());
     let (id, diff) = state.ids
         .iter()
         .map(|(_, id)| (id, id - (state.time % id)))
         .min_by(|&(m, _), &(n, _)| n.cmp(&m))
         .unwrap();
 
-    println!("{:?}, {:?}", id, diff);
-    return id * diff;
+    id * diff
 }
 
 #[aoc(day13, part2)]
 pub fn solve_part2(state: &State) -> Option<i64> {
     let residues = state.ids.iter().map(|(_, bus)| *bus).collect_vec();
     let modulii = state.ids.iter().map(|(i, bus)| bus - i).collect_vec();
-    chinese_remainder(&modulii[..], &residues[..])
+    chinese_remainder(&modulii, &residues)
 }
 
 #[cfg(test)]

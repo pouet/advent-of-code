@@ -116,8 +116,8 @@ impl BitUtils<u64> for u64 {
 }
 
 #[aoc(day14, part1)]
-pub fn solve_part1(states: &Vec<State>) -> u64 {
-    fn apply_masks(masks: &Vec<Mask>, val: &u64) -> u64 {
+pub fn solve_part1(states: &[State]) -> u64 {
+    fn apply_masks(masks: &[Mask], val: &u64) -> u64 {
         masks
             .iter()
             .fold(*val, |acc, mask|
@@ -156,8 +156,8 @@ fn do_it_n_times(masks: &[Mask], value: u64) -> Vec<u64> {
 }
 
 #[aoc(day14, part2)]
-pub fn solve_part2(states: &Vec<State>) -> u64 {
-    pub fn apply_masks(masks: &Vec<Mask>, val: &u64) -> u64 {
+pub fn solve_part2(states: &[State]) -> u64 {
+    pub fn apply_masks(masks: &[Mask], val: &u64) -> u64 {
         masks
             .iter()
             .fold(*val, |acc, mask|
@@ -171,10 +171,10 @@ pub fn solve_part2(states: &Vec<State>) -> u64 {
     let mut h: HashMap<u64, u64> = HashMap::new();
 
     for state in states.iter() {
-        let floating = state.masks.iter().filter(|m| m.x).map(|x| *x).collect_vec();
+        let floating = state.masks.iter().filter(|m| m.x).copied().collect_vec();
         for (i, val) in state.mem.iter() {
             let n = apply_masks(&state.masks, i);
-            do_it_n_times(&floating[..], n)
+            do_it_n_times(&floating, n)
                 .iter()
                 .for_each(|x| { let _ = h.insert(*x, *val); });
         }

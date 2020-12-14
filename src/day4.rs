@@ -62,13 +62,13 @@ pub struct Passport {
 }
 
 impl Passport {
-    fn all_tags_required(tags: &Vec<(String, String)>) -> bool {
+    fn all_tags_required(tags: &[(String, String)]) -> bool {
         ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
             .iter()
             .all(|&tag| tags.iter().any(|(t, _)| t == tag))
     }
 
-    fn from(tags: &Vec<(String, String)>) -> Option<Passport> {
+    fn from(tags: &[(String, String)]) -> Option<Passport> {
         if Passport::all_tags_required(tags).not() {
             None
         } else {
@@ -118,14 +118,14 @@ pub fn gen(input: &str) -> Vec<Vec<(String, String)>> {
 }
 
 #[aoc(day4, part1)]
-pub fn solve_part1(tags: &Vec<Vec<(String, String)>>) -> usize {
+pub fn solve_part1(tags: &[Vec<(String, String)>]) -> usize {
     tags
         .iter()
         .fold(0, |acc, v| acc + if Passport::all_tags_required(v) { 1 } else { 0 })
 }
 
 #[aoc(day4, part2)]
-pub fn solve_part2(tags: &Vec<Vec<(String, String)>>) -> usize {
+pub fn solve_part2(tags: &[Vec<(String, String)>]) -> usize {
     tags
         .iter()
         .flat_map(|p| Passport::from(p))
@@ -187,7 +187,7 @@ fn parse_tag((tag, value): (&str, &str)) -> Option<PassportField> {
     }
 }
 
-fn parse_tags(tags: &Vec<(String, String)>) -> Vec<Option<PassportField>> {
+fn parse_tags(tags: &[(String, String)]) -> Vec<Option<PassportField>> {
     tags
         .iter()
         .map(|(tag, value)| parse_tag((&tag[..], &value[..])))

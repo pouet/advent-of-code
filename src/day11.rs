@@ -135,7 +135,7 @@ pub fn gen(input: &str) -> State {
         .map(|line| line
             .trim()
             .chars()
-            .map(|c| Seat::from(c))
+            .map(Seat::from)
             .collect()
         )
         .collect();

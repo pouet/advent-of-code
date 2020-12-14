@@ -9,7 +9,7 @@ pub fn gen(input: &str) -> Vec<String> {
 }
 
 #[aoc(day6, part1)]
-pub fn solve_part1(input: &Vec<String>) -> usize {
+pub fn solve_part1(input: &[String]) -> usize {
     input
         .iter()
         .map(|s| s
@@ -21,7 +21,7 @@ pub fn solve_part1(input: &Vec<String>) -> usize {
 }
 
 #[aoc(day6, part2)]
-pub fn solve_part2(input: &Vec<String>) -> usize {
+pub fn solve_part2(input: &[String]) -> usize {
     input
         .iter()
         .map(|line| {

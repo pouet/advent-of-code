@@ -11,7 +11,7 @@ pub fn gen(input: &str) -> Vec<usize> {
 }
 
 #[aoc(day10, part1)]
-pub fn solve_part1(input: &Vec<usize>) -> Option<usize> {
+pub fn solve_part1(input: &[usize]) -> Option<usize> {
     let (n1, _, n3, _) = input
         .iter()
         .fold((0, 0, 1, 0), |(n1, n2, n3, acc), n| {
@@ -27,7 +27,7 @@ pub fn solve_part1(input: &Vec<usize>) -> Option<usize> {
 }
 
 #[aoc(day10, part2)]
-pub fn solve_part2(input: &Vec<usize>) -> Option<usize> {
+pub fn solve_part2(input: &[usize]) -> Option<usize> {
     let mut map: HashMap<usize, usize> = HashMap::new();
     map.insert(0, 1);
 

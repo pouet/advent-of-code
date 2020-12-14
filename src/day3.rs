@@ -50,7 +50,7 @@ impl Grid {
 impl Point {
     fn step_by(&mut self, slope: &Slope, size: &Size) {
         self.x = (self.x + slope.right) % size.width;
-        self.y = self.y + slope.down;
+        self.y += slope.down;
     }
 }
 
@@ -61,7 +61,7 @@ pub fn gen(input: &str) -> Grid {
         .map(|s| s.trim().chars().collect())
         .collect();
 
-    return Grid::new(grid);
+    Grid::new(grid)
 }
 
 fn count_trees(grid: &Grid, slope: &Slope) -> usize {
@@ -75,13 +75,13 @@ fn count_trees(grid: &Grid, slope: &Slope) -> usize {
         point.step_by(&slope, &grid.size);
     }
 
-    return trees;
+    trees
 }
 
 #[aoc(day3, part1)]
 pub fn solve_part1(grid: &Grid) -> usize {
     let slope = Slope { right: 3, down: 1 };
-    return count_trees(grid, &slope);
+    count_trees(grid, &slope)
 }
 
 #[aoc(day3, part2)]

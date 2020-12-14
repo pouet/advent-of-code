@@ -19,9 +19,9 @@ pub struct State {
 }
 
 impl State {
-    pub fn new(ops: &Vec<Op>) -> State {
+    pub fn new(ops: &[Op]) -> State {
         State {
-            ops: ops.clone(),
+            ops: ops.to_owned(),
             acc: 0,
             ip: 0,
         }
@@ -80,7 +80,7 @@ impl Op {
     }
 }
 
-pub fn search_valid(inst: &Vec<Op>) -> Option<isize> {
+pub fn search_valid(inst: &[Op]) -> Option<isize> {
     let mut exec = vec![false; inst.len()];
     let mut state = State::new(inst);
 
@@ -104,7 +104,7 @@ pub fn gen(input: &str) -> Vec<Op> {
 }
 
 #[aoc(day8, part1)]
-pub fn solve_part1(inst: &Vec<Op>) -> isize {
+pub fn solve_part1(inst: &[Op]) -> isize {
     let mut exec = vec![false; inst.len()];
     let mut state = State::new(inst);
 
@@ -118,7 +118,7 @@ pub fn solve_part1(inst: &Vec<Op>) -> isize {
 }
 
 #[aoc(day8, part2)]
-pub fn solve_part2(inst: &Vec<Op>) -> Option<isize> {
+pub fn solve_part2(inst: &[Op]) -> Option<isize> {
     for (i, op) in inst.iter().enumerate() {
         let mut other = inst.to_vec();
         match op {
@@ -131,7 +131,7 @@ pub fn solve_part2(inst: &Vec<Op>) -> Option<isize> {
         }
     }
 
-    return None;
+    None
 }
 
 #[cfg(test)]

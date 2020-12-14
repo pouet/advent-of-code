@@ -9,7 +9,7 @@ pub fn gen(input: &str) -> Vec<usize> {
         .collect()
 }
 
-pub fn part1(input: &Vec<usize>, preamble: usize) -> Option<usize> {
+pub fn part1(input: &[usize], preamble: usize) -> Option<usize> {
     let windows = input.windows(preamble);
 
     input
@@ -37,7 +37,7 @@ pub fn part1(input: &Vec<usize>, preamble: usize) -> Option<usize> {
 //     inner(input, target, 0, 0)
 // }
 
-pub fn part2(input: &Vec<usize>, target: usize) -> Option<usize> {
+pub fn part2(input: &[usize], target: usize) -> Option<usize> {
     input
         .iter()
         .enumerate()
@@ -62,12 +62,12 @@ pub fn part2(input: &Vec<usize>, target: usize) -> Option<usize> {
 }
 
 #[aoc(day9, part1)]
-pub fn solve_part1(input: &Vec<usize>) -> Option<usize> {
+pub fn solve_part1(input: &[usize]) -> Option<usize> {
     part1(input, 25)
 }
 
 #[aoc(day9, part2)]
-pub fn solve_part2(input: &Vec<usize>) -> Option<usize> {
+pub fn solve_part2(input: &[usize]) -> Option<usize> {
     part2(input, 41682220)
 }
 

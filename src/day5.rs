@@ -70,7 +70,7 @@ pub fn gen(input: &str) -> Vec<Seat> {
 }
 
 #[aoc(day5, part1)]
-pub fn solve_part1(input: &Vec<Seat>) -> Option<usize> {
+pub fn solve_part1(input: &[Seat]) -> Option<usize> {
     input
         .iter()
         .last()
@@ -78,7 +78,7 @@ pub fn solve_part1(input: &Vec<Seat>) -> Option<usize> {
 }
 
 #[aoc(day5, part2)]
-pub fn solve_part2(input: &Vec<Seat>) -> Option<usize> {
+pub fn solve_part2(input: &[Seat]) -> Option<usize> {
     const LEFT: usize = 0;
     const RIGHT: usize = 1;
     input
