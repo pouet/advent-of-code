@@ -80,7 +80,7 @@ impl Passport {
                 hcl: "".to_string(),
                 ecl: "".to_string(),
                 pid: 0,
-                cid: None
+                cid: None,
             };
 
             let tags = parse_tags(tags);
@@ -147,7 +147,9 @@ fn parse_hgt(s: &str) -> Option<PassportField> {
     }
 }
 
-fn parse_number_if(s: &str, f: fn(&usize) -> bool) -> Option<usize> {
+fn parse_number_if<F>(s: &str, f: F) -> Option<usize>
+    where F: Fn(&usize) -> bool
+{
     s.parse()
         .ok()
         .filter(f)
@@ -245,8 +247,7 @@ iyr:2011 ecl:brn hgt:59in";
     }
 
     #[test]
-    fn test_gen() {
-    }
+    fn test_gen() {}
 
     #[test]
     fn test_part1() {

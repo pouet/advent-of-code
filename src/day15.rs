@@ -1,6 +1,5 @@
 // use nom::lib::std::collections::HashMap;
 use std::ops::Not;
-use nom::lib::std::mem::size_of_val;
 
 fn solve(nums: &[usize], target: usize) -> usize {
     let mut tab = vec![None; target];
