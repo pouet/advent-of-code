@@ -37,7 +37,42 @@ pub fn part1(input: &[usize], preamble: usize) -> Option<usize> {
 //     inner(input, target, 0, 0)
 // }
 
+// trait FoldWhile: Iterator {
+//     type Item;
+//
+//     fn yolo<Acc, Func, Cond>(self, init: Acc, f: Func, cond: Cond) -> Acc
+//         where
+//             Func: FnMut(Acc, Self::Item) -> Acc,
+//             Cond: FnMut(&Acc) -> bool,
+//     ;
+// }
+//
+// impl<I> FoldWhile for I
+//     where I: Iterator// + Iterator<Item=I>
+// {
+//     type Item = Self;
+//
+//     fn yolo<Acc, Func, Cond>(mut self, init: Acc, mut f: Func, mut cond: Cond) -> Acc
+//         where
+//             Func: FnMut(Acc, Self::Item) -> Acc,
+//             Cond: FnMut(&Acc) -> bool,
+//     {
+//     let mut acc = init;
+//         while let Some(x) = self.next() {
+//             if cond(&acc) {
+//                 break;
+//             }
+//             acc = f(acc, x);
+//         }
+//         acc
+//     }
+// }
+
+
 pub fn part2(input: &[usize], target: usize) -> Option<usize> {
+    // let v= vec![0];
+    // v.iter()
+    //     .yolo(0, |(_, _)| 0, |_| true);
     input
         .iter()
         .enumerate()
@@ -46,6 +81,7 @@ pub fn part2(input: &[usize], target: usize) -> Option<usize> {
                 .iter()
                 .skip(i)
                 .enumerate()
+                // .yolo((0, 0), |(i, acc), (j, it)| (i, acc), |_| true)
                 // need a fold_while :(
                 .fold((0, 0), |(i, acc), (j, it)|
                     if acc < target { (j, acc + *it) } else { (i, acc) });
